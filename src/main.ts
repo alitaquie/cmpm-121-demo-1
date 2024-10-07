@@ -11,14 +11,14 @@ let growthRate: number = 0;
 const purchases: { A: number; B: number; C: number } = {
   A: 0,
   B: 0,
-  C: 0
+  C: 0,
 };
 
-// Upgrade items configuration
+
 const upgrades = [
   { name: "Upgrade A", cost: 10, rate: 0.1, purchased: 0 },
   { name: "Upgrade B", cost: 100, rate: 2.0, purchased: 0 },
-  { name: "Upgrade C", cost: 1000, rate: 50.0, purchased: 0 }
+  { name: "Upgrade C", cost: 1000, rate: 50.0, purchased: 0 },
 ];
 
 display.innerText = `Kicks: ${kicks.toFixed(2)}`;
@@ -39,9 +39,12 @@ const updateDisplays = () => {
   `;
 };
 
-const createUpgradeButton = (upgrade: { name: string; cost: number; rate: number; purchased: number }, index: number) => {
+const createUpgradeButton = (
+  upgrade: { name: string; cost: number; rate: number; purchased: number },
+  index: number,
+) => {
   const button = document.createElement("button");
-  button.innerHTML = `${upgrade.name} (Cost: ${upgrade.cost})`;
+  button.innerHTML = `${upgrade.name} (Cost: ${upgrade.cost.toFixed(2)})`;
   button.disabled = true;
 
   button.addEventListener("click", () => {
@@ -56,6 +59,7 @@ const createUpgradeButton = (upgrade: { name: string; cost: number; rate: number
         purchases.C++;
       }
       upgrade.purchased++;
+      upgrade.cost *= 1.15; 
       updateDisplays();
     }
   });
@@ -69,6 +73,7 @@ const upgradeButtons = upgrades.map(createUpgradeButton);
 const checkUpgradeAvailability = () => {
   upgrades.forEach((upgrade, index) => {
     upgradeButtons[index].disabled = kicks < upgrade.cost;
+    upgradeButtons[index].innerHTML = `${upgrade.name} (Cost: ${upgrade.cost.toFixed(2)})`;
   });
 };
 
