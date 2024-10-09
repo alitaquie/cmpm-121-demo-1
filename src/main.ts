@@ -1,7 +1,7 @@
 interface Item {
   name: string;
-  price: number; 
-  skill: number; 
+  price: number;
+  skill: number;
 }
 
 const availableItems: Item[] = [
@@ -28,21 +28,28 @@ const purchases: { [key: string]: number } = {
 
 display.innerText = `Goals: ${kicks.toFixed(2)}`;
 growthDisplay.innerText = `Growth Rate: ${growthRate.toFixed(2)} Goals/sec`;
-purchasesDisplay.innerHTML = availableItems.map(item => `
+purchasesDisplay.innerHTML = availableItems
+  .map(
+    (item) => `
   <p>Purchased ${item.name}: ${purchases[item.name]}</p>
-`).join("");
+`,
+  )
+  .join("");
 
 const updateDisplays = () => {
   display.innerText = `Goals: ${kicks.toFixed(2)}`;
   growthDisplay.innerText = `Player Stats: ${growthRate.toFixed(2)} Goals/sec`;
-  purchasesDisplay.innerHTML = availableItems.map(item => `
+  purchasesDisplay.innerHTML = availableItems
+    .map(
+      (item) => `
     <p>Purchased ${item.name}: ${purchases[item.name]}</p>
-  `).join("");
+  `,
+    )
+    .join("");
 };
 
 const createUpgradeButton = (
   item: Item,
-  index: number,
 ) => {
   const button = document.createElement("button");
   button.innerHTML = `${item.name} (Price: ${item.price.toFixed(2)})`;
@@ -67,7 +74,8 @@ const upgradeButtons = availableItems.map(createUpgradeButton);
 const checkUpgradeAvailability = () => {
   availableItems.forEach((item, index) => {
     upgradeButtons[index].disabled = kicks < item.price;
-    upgradeButtons[index].innerHTML = `${item.name} (Price: ${item.price.toFixed(2)})`;
+    upgradeButtons[index].innerHTML =
+      `${item.name} (Price: ${item.price.toFixed(2)})`;
   });
 };
 
