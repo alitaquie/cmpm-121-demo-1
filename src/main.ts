@@ -1,3 +1,15 @@
+interface Item {
+  name: string;
+  price: number; 
+  skill: number; 
+}
+
+const availableItems: Item[] = [
+  { name: "Dribble", price: 10, skill: 0.1 },
+  { name: "Strength", price: 100, skill: 2 },
+  { name: "Speed", price: 1000, skill: 50 },
+];
+
 import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
@@ -8,58 +20,40 @@ const purchasesDisplay: HTMLDivElement = document.createElement("div");
 let kicks: number = 0;
 let growthRate: number = 0;
 
-const purchases: { A: number; B: number; C: number } = {
-  A: 0,
-  B: 0,
-  C: 0,
+const purchases: { [key: string]: number } = {
+  Dribble: 0,
+  Strength: 0,
+  Speed: 0,
 };
 
-
-const upgrades = [
-  { name: "Upgrade A", cost: 10, rate: 0.1, purchased: 0 },
-  { name: "Upgrade B", cost: 100, rate: 2.0, purchased: 0 },
-  { name: "Upgrade C", cost: 1000, rate: 50.0, purchased: 0 },
-];
-
-display.innerText = `Kicks: ${kicks.toFixed(2)}`;
-growthDisplay.innerText = `Growth Rate: ${growthRate.toFixed(2)} kicks/sec`;
-purchasesDisplay.innerHTML = `
-  <p>Purchased A: ${purchases.A}</p>
-  <p>Purchased B: ${purchases.B}</p>
-  <p>Purchased C: ${purchases.C}</p>
-`;
+display.innerText = `Goals: ${kicks.toFixed(2)}`;
+growthDisplay.innerText = `Growth Rate: ${growthRate.toFixed(2)} Goals/sec`;
+purchasesDisplay.innerHTML = availableItems.map(item => `
+  <p>Purchased ${item.name}: ${purchases[item.name]}</p>
+`).join("");
 
 const updateDisplays = () => {
-  display.innerText = `Kicks: ${kicks.toFixed(2)}`;
-  growthDisplay.innerText = `Growth Rate: ${growthRate.toFixed(2)} kicks/sec`;
-  purchasesDisplay.innerHTML = `
-    <p>Purchased A: ${purchases.A}</p>
-    <p>Purchased B: ${purchases.B}</p>
-    <p>Purchased C: ${purchases.C}</p>
-  `;
+  display.innerText = `Goals: ${kicks.toFixed(2)}`;
+  growthDisplay.innerText = `Player Stats: ${growthRate.toFixed(2)} Goals/sec`;
+  purchasesDisplay.innerHTML = availableItems.map(item => `
+    <p>Purchased ${item.name}: ${purchases[item.name]}</p>
+  `).join("");
 };
 
 const createUpgradeButton = (
-  upgrade: { name: string; cost: number; rate: number; purchased: number },
+  item: Item,
   index: number,
 ) => {
   const button = document.createElement("button");
-  button.innerHTML = `${upgrade.name} (Cost: ${upgrade.cost.toFixed(2)})`;
+  button.innerHTML = `${item.name} (Price: ${item.price.toFixed(2)})`;
   button.disabled = true;
 
   button.addEventListener("click", () => {
-    if (kicks >= upgrade.cost) {
-      kicks -= upgrade.cost;
-      growthRate += upgrade.rate;
-      if (index === 0) {
-        purchases.A++;
-      } else if (index === 1) {
-        purchases.B++;
-      } else if (index === 2) {
-        purchases.C++;
-      }
-      upgrade.purchased++;
-      upgrade.cost *= 1.15; 
+    if (kicks >= item.price) {
+      kicks -= item.price;
+      growthRate += item.skill;
+      purchases[item.name]++;
+      item.price *= 1.15;
       updateDisplays();
     }
   });
@@ -68,12 +62,12 @@ const createUpgradeButton = (
   return button;
 };
 
-const upgradeButtons = upgrades.map(createUpgradeButton);
+const upgradeButtons = availableItems.map(createUpgradeButton);
 
 const checkUpgradeAvailability = () => {
-  upgrades.forEach((upgrade, index) => {
-    upgradeButtons[index].disabled = kicks < upgrade.cost;
-    upgradeButtons[index].innerHTML = `${upgrade.name} (Cost: ${upgrade.cost.toFixed(2)})`;
+  availableItems.forEach((item, index) => {
+    upgradeButtons[index].disabled = kicks < item.price;
+    upgradeButtons[index].innerHTML = `${item.name} (Price: ${item.price.toFixed(2)})`;
   });
 };
 
