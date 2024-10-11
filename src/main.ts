@@ -2,20 +2,29 @@ interface Item {
   name: string;
   price: number;
   skill: number;
+  description: string;
 }
 
 const availableItems: Item[] = [
-  { name: "Dribble", price: 10, skill: 0.1 },
-  { name: "Strength", price: 100, skill: 2 },
-  { name: "Speed", price: 1000, skill: 50 },
+  { name: "Dribble", price: 10, skill: 0.1,description: "Move like Messi!" },
+  { name: "Strength", price: 100, skill: 2,description: "Pump iron!" },
+  { name: "Speed", price: 1000, skill: 50,description: "Run like Mbappe!" },
+  { name: "Stamina", price: 500, skill: 25,description: "The most important!"},
+  { name: "Pass", price: 750, skill: 37,description: "Bend it like Beckham!"},
+
 ];
 
 import "./style.css";
-
 const app: HTMLDivElement = document.querySelector("#app")!;
 const display: HTMLDivElement = document.querySelector("#display_kicks")!;
 const growthDisplay: HTMLDivElement = document.createElement("div");
 const purchasesDisplay: HTMLDivElement = document.createElement("div");
+
+
+const descriptionDisplay: HTMLDivElement = document.createElement("div");
+descriptionDisplay.style.padding = "10px";
+descriptionDisplay.style.marginTop = "10px";
+descriptionDisplay.innerHTML = "Hover over an item to see its description";
 
 let kicks: number = 0;
 let growthRate: number = 0;
@@ -24,6 +33,8 @@ const purchases: { [key: string]: number } = {
   Dribble: 0,
   Strength: 0,
   Speed: 0,
+  Pass: 0,
+  Stamina: 0,
 };
 
 display.innerText = `Goals: ${kicks.toFixed(2)}`;
@@ -54,6 +65,15 @@ const createUpgradeButton = (
   const button = document.createElement("button");
   button.innerHTML = `${item.name} (Price: ${item.price.toFixed(2)})`;
   button.disabled = true;
+
+
+  button.addEventListener("mouseover", () => {
+    descriptionDisplay.innerHTML = `<strong>${item.name}</strong>: ${item.description}`;
+  });
+
+  button.addEventListener("mouseout", () => {
+    descriptionDisplay.innerHTML = "Hover over an item to see its description";
+  });
 
   button.addEventListener("click", () => {
     if (kicks >= item.price) {
@@ -104,6 +124,7 @@ const updateKicks = (timestamp: number) => {
 
 app.appendChild(growthDisplay);
 app.appendChild(purchasesDisplay);
+app.appendChild(descriptionDisplay);  
 requestAnimationFrame(updateKicks);
 
 app.appendChild(display);
