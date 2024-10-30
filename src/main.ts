@@ -6,12 +6,16 @@ interface Item {
 }
 
 const availableItems: Item[] = [
-  { name: "Dribble", price: 10, skill: 0.1,description: "Move like Messi!" },
-  { name: "Strength", price: 100, skill: 2,description: "Pump iron!" },
-  { name: "Speed", price: 1000, skill: 50,description: "Run like Mbappe!" },
-  { name: "Stamina", price: 500, skill: 25,description: "The most important!"},
-  { name: "Pass", price: 750, skill: 37,description: "Bend it like Beckham!"},
-
+  { name: "Dribble", price: 10, skill: 0.1, description: "Move like Messi!" },
+  { name: "Strength", price: 100, skill: 2, description: "Pump iron!" },
+  { name: "Speed", price: 1000, skill: 50, description: "Run like Mbappe!" },
+  {
+    name: "Stamina",
+    price: 500,
+    skill: 25,
+    description: "The most important!",
+  },
+  { name: "Pass", price: 750, skill: 37, description: "Bend it like Beckham!" },
 ];
 
 import "./style.css";
@@ -19,7 +23,6 @@ const app: HTMLDivElement = document.querySelector("#app")!;
 const display: HTMLDivElement = document.querySelector("#display_kicks")!;
 const growthDisplay: HTMLDivElement = document.createElement("div");
 const purchasesDisplay: HTMLDivElement = document.createElement("div");
-
 
 const descriptionDisplay: HTMLDivElement = document.createElement("div");
 descriptionDisplay.style.padding = "10px";
@@ -47,25 +50,26 @@ purchasesDisplay.innerHTML = availableItems
   )
   .join("");
 
-const updateDisplays = () => {
-  display.innerText = `Goals: ${kicks.toFixed(2)}`;
-  growthDisplay.innerText = `Player Stats: ${growthRate.toFixed(2)} Goals/sec`;
-  purchasesDisplay.innerHTML = availableItems
-    .map(
-      (item) => `
-    <p>Purchased ${item.name}: ${purchases[item.name]}</p>
-  `,
-    )
-    .join("");
-};
+  const updateDisplays = () => {
+    display.innerText = `Goals: ${kicks.toFixed(2)}`;
+    growthDisplay.innerText = `Player Stats: ${growthRate.toFixed(2)} Goals/sec`;
+    purchasesDisplay.innerHTML = availableItems
+      .map(
+        (item) => `
+      <p>Purchased ${item.name}: ${purchases[item.name]}</p>
+    `,
+      )
+      .join("");
+  
+    // Add a kick animation
+    display.classList.add("kick-animation");
+    setTimeout(() => display.classList.remove("kick-animation"), 300);
+  };
 
-const createUpgradeButton = (
-  item: Item,
-) => {
+const createUpgradeButton = (item: Item) => {
   const button = document.createElement("button");
   button.innerHTML = `${item.name} (Price: ${item.price.toFixed(2)})`;
   button.disabled = true;
-
 
   button.addEventListener("mouseover", () => {
     descriptionDisplay.innerHTML = `<strong>${item.name}</strong>: ${item.description}`;
@@ -103,10 +107,42 @@ const kick_ball = () => {
   kicks += 1;
   updateDisplays();
   checkUpgradeAvailability();
+
+  // Add subtle animation effect to the button
+  kickButton.style.transform = "scale(1.2)";
+  setTimeout(() => (kickButton.style.transform = "scale(1)"), 100);
+
+  // Create a soccer ball element
+  const soccerBall = document.createElement("div");
+  soccerBall.classList.add("soccer-ball");
+
+  // Position the ball near the button
+  const buttonRect = kickButton.getBoundingClientRect();
+  soccerBall.style.left = `${buttonRect.left + buttonRect.width / 2}px`;
+  soccerBall.style.top = `${buttonRect.top}px`;
+
+  // Append ball to the document
+  document.body.appendChild(soccerBall);
+
+  // Remove the ball after the animation completes
+  soccerBall.addEventListener("animationend", () => {
+    soccerBall.remove();
+  });
 };
 
+
+
 const kickButton = document.createElement("button");
+
 kickButton.innerHTML = "⚽ Kick";
+kickButton.style.fontSize = "2em";
+kickButton.style.padding = "0.5em 1em";
+kickButton.style.backgroundColor = "var(--primary-color)";
+kickButton.style.color = "white";
+kickButton.style.border = "2px solid var(--secondary-color)";
+kickButton.style.borderRadius = "50%";
+kickButton.style.transition = "transform 0.1s";
+
 kickButton.addEventListener("click", kick_ball);
 app.appendChild(kickButton);
 
@@ -124,7 +160,7 @@ const updateKicks = (timestamp: number) => {
 
 app.appendChild(growthDisplay);
 app.appendChild(purchasesDisplay);
-app.appendChild(descriptionDisplay);  
+app.appendChild(descriptionDisplay);
 requestAnimationFrame(updateKicks);
 
 app.appendChild(display);
